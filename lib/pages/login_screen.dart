@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // key: formKey,
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             Card(
@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Container(
                       // padding: const EdgeInsets.only(top: 18),
-                      child: Icon(
+                      child: const Icon(
                         Icons.mail_outline,
                         color: Colors.black,
                         size: 26,
@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         // color: Colors.amber,
                         padding: const EdgeInsets.only(left: 16, top: 6),
                         height: 60,
-                        child: TextField(
+                        child: const TextField(
                             decoration: InputDecoration(
                                 hintText: 'Email', border: InputBorder.none)),
                       ),
@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Card(
@@ -137,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Container(
                       // padding: const EdgeInsets.only(top: 18),
-                      child: Icon(
+                      child: const Icon(
                         Icons.lock_outline,
                         color: Colors.black,
                         size: 26,
@@ -148,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         // color: Colors.amber,
                         padding: const EdgeInsets.only(left: 16, top: 6),
                         height: 60,
-                        child: TextField(
+                        child: const TextField(
                           decoration: InputDecoration(
                               hintText: 'Password', border: InputBorder.none),
                         ),
@@ -158,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Container(
@@ -218,18 +218,70 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget buildOrLoginWith() {
     return Container(
-      color: Colors.green,
-      margin: EdgeInsets.only(left: 20, right: 20),
+      // color: Colors.green,
+      margin: const EdgeInsets.only(left: 20, right: 20),
       width: double.infinity,
       height: w! * 0.86,
       child: Column(
         children: [
+          SizedBox(height: 36),
           Text(
             'Or login with',
             style: GoogleFonts.roboto(
+              color: HexColor('#AAA8B5'),
               fontSize: 16,
+              fontWeight: FontWeight.w600,
             ),
           ),
+          SizedBox(height: 18),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                googleIc,
+                fit: BoxFit.cover,
+                height: 64,
+                width: 64,
+              ),
+              SizedBox(width: 8),
+              Image.asset(
+                facebookIc,
+                fit: BoxFit.cover,
+                height: 64,
+                width: 64,
+              ),
+              SizedBox(width: 8),
+              Image.asset(
+                twitterIc,
+                fit: BoxFit.cover,
+                height: 64,
+                width: 64,
+              ),
+            ],
+          ),
+          SizedBox(height: 86),
+          RichText(
+              text: TextSpan(children: [
+            TextSpan(
+              text: "Don't have and account? ",
+              style: GoogleFonts.roboto(
+                textStyle: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400),
+              ),
+            ),
+            TextSpan(
+              text: "Sign up",
+              style: GoogleFonts.roboto(
+                textStyle: TextStyle(
+                  color: HexColor('#3885FF'),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ])),
         ],
       ),
     );
