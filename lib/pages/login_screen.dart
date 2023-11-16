@@ -13,8 +13,25 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final TextEditingController _textEditingController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  var _enteredEmail = '';
+  var _enteredPassword = '';
+  bool passwordVisible = false;
+
+  void _submit() async {
+    final isValid = _formKey.currentState!.validate();
+
+    if (!isValid) {
+      return;
+    }
+  }
+
+  bool isValidEmail(String email) {
+    return RegExp(
+            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+        .hasMatch(email);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               buildDesign(),
               buildLoginText(),
-              buildFields(context),
+              buildFields(_formKey, context),
               buildOrLoginWith(),
             ],
           ),
@@ -55,13 +72,16 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget buildLoginText() {
     return Container(
       width: double.infinity,
-      height: w! * 0.20,
-      margin: EdgeInsets.only(left: 20, right: 20),
+      height: w! * 0.3,
+      margin: const EdgeInsets.only(left: 20, right: 20),
       // color: Colors.amber,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(
+            height: 30,
+          ),
           Text(
             'Login',
             style: GoogleFonts.roboto(
@@ -73,7 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
             'Please sign in to continue',
             style: GoogleFonts.roboto(
               fontSize: 18,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w500,
+              color: HexColor('#656371'),
             ),
           ),
         ],
@@ -81,14 +102,13 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget buildFields(BuildContext context) {
+  Widget buildFields(GlobalKey<FormState> formKey, BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 20, right: 20),
+      margin: const EdgeInsets.only(left: 20, right: 20),
       width: double.infinity,
-      height: w! * 0.66,
       // color: Colors.pink,
       child: Form(
-        // key: formKey,
+        key: formKey,
         child: Column(
           children: [
             const SizedBox(
@@ -96,28 +116,53 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             Card(
               elevation: 8,
-              color: Colors.white,
               child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
                 padding: const EdgeInsets.only(left: 12, right: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
-                      // padding: const EdgeInsets.only(top: 18),
-                      child: const Icon(
-                        Icons.mail_outline,
-                        color: Colors.black,
-                        size: 26,
-                      ),
+                    const Icon(
+                      Icons.mail_outline,
+                      color: Colors.black,
+                      size: 26,
                     ),
                     Expanded(
-                      child: Container(
-                        // color: Colors.amber,
-                        padding: const EdgeInsets.only(left: 16, top: 6),
-                        height: 60,
-                        child: const TextField(
-                            decoration: InputDecoration(
-                                hintText: 'Email', border: InputBorder.none)),
+                      child: Stack(
+                        children: [
+                          Container(
+                            // color: Colors.amber,
+                            padding: const EdgeInsets.only(left: 16),
+                            height: 60,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.only(
+                                top: 1, left: 8, bottom: 8),
+                            child: TextFormField(
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.only(
+                                    left: 11, right: 3, top: 14, bottom: 2),
+                                errorStyle:
+                                    TextStyle(fontSize: 12, height: 0.3),
+                                hintText: 'Email',
+                                border: InputBorder.none,
+                              ),
+                              keyboardType: TextInputType.emailAddress,
+                              autocorrect: false,
+                              textCapitalization: TextCapitalization.none,
+                              validator: (value) =>
+                                  isValidEmail(value.toString())
+                                      ? null
+                                      : 'Please enter valid email',
+                              onSaved: (value) {
+                                _enteredEmail = value!;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     )
                   ],
@@ -129,29 +174,65 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             Card(
               elevation: 8,
-              color: Colors.white,
               child: Container(
                 padding: const EdgeInsets.only(left: 12, right: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
-                      // padding: const EdgeInsets.only(top: 18),
-                      child: const Icon(
-                        Icons.lock_outline,
-                        color: Colors.black,
-                        size: 26,
-                      ),
+                    const Icon(
+                      Icons.lock_outline,
+                      color: Colors.black,
+                      size: 26,
                     ),
                     Expanded(
-                      child: Container(
-                        // color: Colors.amber,
-                        padding: const EdgeInsets.only(left: 16, top: 6),
-                        height: 60,
-                        child: const TextField(
-                          decoration: InputDecoration(
-                              hintText: 'Password', border: InputBorder.none),
-                        ),
+                      child: Stack(
+                        children: [
+                          Container(
+                            // color: Colors.amber,
+                            padding: const EdgeInsets.only(left: 16),
+                            height: 60,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.only(
+                                top: 8, left: 8, bottom: 8),
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.only(
+                                    left: 11, right: 3, top: 14, bottom: 2),
+                                errorStyle:
+                                    TextStyle(fontSize: 12, height: 0.8),
+                                hintText: 'Password',
+                                border: InputBorder.none,
+                                suffixIcon: IconButton(
+                                  icon: Icon(passwordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off),
+                                  onPressed: () {
+                                    setState(() {
+                                      passwordVisible = !passwordVisible;
+                                    });
+                                  },
+                                ),
+                              ),
+                              obscureText: passwordVisible,
+                              keyboardType: TextInputType.visiblePassword,
+                              textInputAction: TextInputAction.done,
+                              validator: (value) {
+                                if (value == null || value.trim().length < 6) {
+                                  return 'Password must be at least 6 characters long.';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _enteredPassword = value!;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     )
                   ],
@@ -169,7 +250,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _submit,
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(0),
                         shape: RoundedRectangleBorder(
@@ -217,72 +298,79 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget buildOrLoginWith() {
-    return Container(
-      // color: Colors.green,
-      margin: const EdgeInsets.only(left: 20, right: 20),
-      width: double.infinity,
-      height: w! * 0.86,
-      child: Column(
-        children: [
-          SizedBox(height: 36),
-          Text(
-            'Or login with',
-            style: GoogleFonts.roboto(
-              color: HexColor('#AAA8B5'),
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(height: 18),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                googleIc,
-                fit: BoxFit.cover,
-                height: 64,
-                width: 64,
-              ),
-              SizedBox(width: 8),
-              Image.asset(
-                facebookIc,
-                fit: BoxFit.cover,
-                height: 64,
-                width: 64,
-              ),
-              SizedBox(width: 8),
-              Image.asset(
-                twitterIc,
-                fit: BoxFit.cover,
-                height: 64,
-                width: 64,
-              ),
-            ],
-          ),
-          SizedBox(height: 86),
-          RichText(
-              text: TextSpan(children: [
-            TextSpan(
-              text: "Don't have and account? ",
+    return Expanded(
+      child: Container(
+        // color: Colors.green,
+        margin: const EdgeInsets.only(left: 20, right: 20),
+        width: double.infinity,
+        child: Column(
+          children: [
+            Text(
+              'Or login with',
               style: GoogleFonts.roboto(
-                textStyle: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400),
+                color: HexColor('#AAA8B5'),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            TextSpan(
-              text: "Sign up",
-              style: GoogleFonts.roboto(
-                textStyle: TextStyle(
-                  color: HexColor('#3885FF'),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                ),
+            Container(
+              margin: const EdgeInsets.only(top: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    googleIc,
+                    fit: BoxFit.cover,
+                    height: 64,
+                    width: 64,
+                  ),
+                  SizedBox(width: 8),
+                  Image.asset(
+                    facebookIc,
+                    fit: BoxFit.cover,
+                    height: 64,
+                    width: 64,
+                  ),
+                  SizedBox(width: 8),
+                  Image.asset(
+                    twitterIc,
+                    fit: BoxFit.cover,
+                    height: 64,
+                    width: 64,
+                  ),
+                ],
               ),
             ),
-          ])),
-        ],
+            Expanded(
+              child: Container(
+                // color: Colors.red,
+                margin: const EdgeInsets.only(top: 38),
+                child: RichText(
+                    text: TextSpan(children: [
+                  TextSpan(
+                    text: "Don't have and account? ",
+                    style: GoogleFonts.roboto(
+                      textStyle: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400),
+                    ),
+                  ),
+                  TextSpan(
+                    text: "Sign up",
+                    style: GoogleFonts.roboto(
+                      textStyle: TextStyle(
+                        color: HexColor('#3885FF'),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ])),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
